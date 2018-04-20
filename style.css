@@ -13,7 +13,7 @@ ol,ul {list-style: none;}
     background: white;
 }
 body {
-    margin: 0;
+    overflow: hidden;
 }
 .action {
     position: fixed;
