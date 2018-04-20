@@ -1,10 +1,13 @@
 var c = document.getElementById("xxx")
 var context = c.getContext("2d")
-
+var radius = 5
+//画笔半径默认为5
 canvasFullSize()
 window.onresize = function () {
     canvasFullSize()
 }
+
+listenToUser(c)
 
 var eraserabled = false
 eraser.onclick = function () {
@@ -29,6 +32,7 @@ download.onclick = function () {
     a.target = "_blank"
     a.click()
 }
+
 black.onclick = function () {
     context.fillStyle = "black"
     context.strokeStyle = "black"
@@ -89,7 +93,7 @@ blue.onclick = function () {
     green.classList.remove("active")
     blue.classList.add("active")
 }
-var radius = 5
+
 lighter.onclick = function () {
     radius = 3
     lighter.classList.add("active")
@@ -108,88 +112,6 @@ bolder.onclick = function () {
     normal.classList.remove("active")
     bolder.classList.add("active")
 }
-var using = false
-var lastPoint = {
-    undefined,
-    undefined
-}
-
-if (document.body.ontouchstart !== undefined) {
-    //检测是否为触屏设备，是触摸屏执行下面
-    c.ontouchstart = function (abc) {
-        var x = abc.clientX
-        var y = abc.clientY
-        using = true
-        if (eraserabled) {
-            context.clearRect(x, y, 10, 10)
-        } else {
-            lastPoint = {
-                "x": x,
-                "y": y
-            }
-            drawCircle(x, y)
-        }
-
-    }
-    c.ontouchmove = function (abc) {
-        var x = abc.clientX
-        var y = abc.clientY
-        if (using) {
-            if (eraserabled) {
-                context.clearRect(x, y, 10, 10)
-            } else {
-                var newPoint = {
-                    "x": x,
-                    "y": y
-                }
-                drawCircle(x, y, radius)
-                drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
-                lastPoint = newPoint
-            }
-        }
-    }
-    c.ontouchend = function (abc) {
-        using = false
-    }
-} else {
-    //不是触摸屏执行下面
-    c.onmousedown = function (abc) {
-        var x = abc.clientX
-        var y = abc.clientY
-        using = true
-        if (eraserabled) {
-            context.clearRect(x, y, 10, 10)
-        } else {
-            lastPoint = {
-                "x": x,
-                "y": y
-            }
-            drawCircle(x, y)
-        }
-
-    }
-    c.onmousemove = function (abc) {
-        var x = abc.clientX
-        var y = abc.clientY
-        if (using) {
-            if (eraserabled) {
-                context.clearRect(x, y, 10, 10)
-            } else {
-                var newPoint = {
-                    "x": x,
-                    "y": y
-                }
-                drawCircle(x, y, radius)
-                drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
-                lastPoint = newPoint
-            }
-        }
-    }
-    c.onmouseup = function (abc) {
-        using = false
-    }
-}
-
 
 function canvasFullSize() {
     var pageWidth = document.documentElement.clientWidth
@@ -209,3 +131,86 @@ function drawLine(x1, y1, x2, y2) {
     context.lineTo(x2, y2)
     context.stroke()
 } //划线函数
+function listenToUser(canvas) {
+    var using = false
+    var lastPoint = {
+        undefined,
+        undefined
+    }
+
+    if (document.body.ontouchstart !== undefined) {
+        //检测是否为触屏设备，是触摸屏执行下面
+        canvas.ontouchstart = function (abc) {
+            var x = abc.touches[0].clientX
+            var y = abc.touches[0].clientY
+            using = true
+            if (eraserabled) {
+                context.clearRect(x, y, 10, 10)
+            } else {
+                lastPoint = {
+                    "x": x,
+                    "y": y
+                }
+                drawCircle(x, y)
+            }
+
+        }
+        canvas.ontouchmove = function (abc) {
+            var x = abc.touches[0].clientX
+            var y = abc.touches[0].clientY
+            if (using) {
+                if (eraserabled) {
+                    context.clearRect(x, y, 10, 10)
+                } else {
+                    var newPoint = {
+                        "x": x,
+                        "y": y
+                    }
+                    drawCircle(x, y, radius)
+                    drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
+                    lastPoint = newPoint
+                }
+            }
+        }
+        canvas.ontouchend = function (abc) {
+            using = false
+        }
+    } else {
+        //不是触摸屏执行下面
+        canvas.onmousedown = function (abc) {
+            var x = abc.clientX
+            var y = abc.clientY
+            using = true
+            if (eraserabled) {
+                context.clearRect(x, y, 10, 10)
+            } else {
+                lastPoint = {
+                    "x": x,
+                    "y": y
+                }
+                drawCircle(x, y)
+            }
+
+        }
+        canvas.onmousemove = function (abc) {
+            var x = abc.clientX
+            var y = abc.clientY
+            if (using) {
+                if (eraserabled) {
+                    context.clearRect(x, y, 10, 10)
+                } else {
+                    var newPoint = {
+                        "x": x,
+                        "y": y
+                    }
+                    drawCircle(x, y, radius)
+                    drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
+                    lastPoint = newPoint
+                }
+            }
+        }
+        canvas.onmouseup = function (abc) {
+            using = false
+        }
+    }
+}
